@@ -1,0 +1,98 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Candidate {
+  id           Int      @id @default(autoincrement())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  email        String   @unique
+  hash         String
+  name         String?
+  phone        String?
+  years_of_exp Int?
+
+  tagId       Int
+  tags        Tag            @relation(fields: [tagId], references: [id])
+  Application Applications[]
+
+  @@map("candidate")
+}
+
+model Tag {
+  id          Int            @id @default(autoincrement())
+  name        String?
+  type        String?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  Application Applications[]
+  JobPosting  JobPosting[]
+  Candidate   Candidate[]
+
+  @@map("tag")
+}
+
+model Applications {
+  id            Int        @id @default(autoincrement())
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  resume_url    String
+  status        String?
+  referred_by   String
+  candidateId   Int
+  candidate     Candidate  @relation(fields: [candidateId], references: [id])
+  tagId         Int
+  tags          Tag        @relation(fields: [tagId], references: [id])
+  job_postingId Int
+  job_posting   JobPosting @relation(fields: [job_postingId], references: [id])
+
+  @@map("applications")
+}
+
+enum access_role {
+  superadmin
+  recruiter
+  interviewer
+}
+
+model Users {
+  id           Int          @id @default(autoincrement())
+  role         access_role? @default(interviewer)
+  userName     String       @unique
+  hash         String
+  name         String?
+  refreshToken String?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  @@map("users")
+}
+
+model JobPosting {
+  id          Int            @id @default(autoincrement())
+  title       String
+  description String?
+  catagory    String
+  job_role    String
+  dedline     String
+  priority    priority
+  tagsId      Int
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  tags        Tag            @relation(fields: [tagsId], references: [id])
+  Application Applications[]
+}
+
+enum priority {
+  high
+  normal
+  low
+}
