@@ -47,7 +47,7 @@ $ npm run start:prod
 
 ```bash
   # restart docker
-  yarn db:dev:restart
+ $ yarn db:dev:restart
 ```
 
 ## Test
