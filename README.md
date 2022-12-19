@@ -45,6 +45,11 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
+```bash
+  # restart docker
+  yarn db:dev:restart
+```
+
 ## Test
 
 ```bash
